@@ -1,11 +1,11 @@
 public class RegistrationForm{
     private HDBOfficer officer = null;
-    private Project registeredProject = null;
+    private String registeredProjectName;
     private String registrationStatus = null;
 
-    public RegistrationForm(Project registeredProject, HDBOfficer officer){
+    public RegistrationForm(HDBOfficer officer, String registeredProjectName){
         this.officer = officer;
-        this.registeredProject = registeredProject;
+        this.registeredProjectName = registeredProjectName;
         this.registrationStatus = "Pending";
     }
 
@@ -13,12 +13,12 @@ public class RegistrationForm{
         return this.officer;
     }
 
-    public Project getRegisteredProject(){
-        return this.registeredProject;
+    public String getRegisteredProject(){
+        return this.registeredProjectName;
     }
 
-    public String getRegistrationStatus(){
-        return this.registrationStatus;
+    public void getRegistrationStatus(){
+        System.out.println("Registration Status of project "+ this.registeredProject.getName() + " is " + this.registrationStatus);
     }
 
     public void setRegistrationStatus(String newStatus){
