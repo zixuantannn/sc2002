@@ -13,8 +13,10 @@ public class Applicant extends UserAccount {
     public Applicant(String u, String n, int a, String m){  
         super(u,n,a,m);
         this.appliedForProject = false;
+		
     }
     
+	 
     public List<Project> viewAvailableProjects(){
         System.out.println("Displaying available projects...");
         List <Project> allProjects = Project.getAllProjects();

@@ -1,4 +1,4 @@
-package OOProject;
+package ooProject;
 
 public abstract class UserAccount {
     private String userID;
