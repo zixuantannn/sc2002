@@ -13,10 +13,11 @@ public class Applicant extends UserAccount {
     public Applicant(String u, String n, int a, String m){  
         super(u,n,a,m);
         this.appliedForProject = false;
+		this.projectApplied = new ArrayList<>();
 		
     }
     
-	 
+	
     public List<Project> viewAvailableProjects(){
         System.out.println("Displaying available projects...");
         List <Project> allProjects = Project.getAllProjects();
@@ -92,15 +93,22 @@ public class Applicant extends UserAccount {
     	if (projectApplied.isEmpty()) {
     		System.out.println("You have not applied for any project. ");
     	}
-    	// If no pending project in the list
-    	else if (!(projectApplied.get(0)).equals("Pending")) {
-    		System.out.println("You have no pending projects. ");
-    	}
-    	else {
-    		ApplicationForm.delete(projectApplied.get(0));
-        	projectApplied.remove(0);
-    	}
+		else{
+			// If the lastest application is still pending, delete it from the list of projects applied.
+			ApplicationForm lastest = projectApplied.get(0);
+			if(lastest.getApplicationStatus().equals("Pending")){
+				projectApplied.remove(lastest);
+				this.appliedForProject = false;
+				System.out.println("Your application for "+ lastest.getProjectName()+ " has been cancelled. ");
+			}
+			else if (lastest.getApplicationStatus().equals("Unsuccessful")){
+				System.out.println("Your application for "+ lastest.getProjectName()+ " was unsuccessful.");
+			}
+		}
+    	System.out.println("You have no pending projects. ");
     	
+    	 
+		
     }
     public void sendEnquiry(){
     	Scanner sc = new Scanner (System.in);
