@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationForm {
-    private String applicationInformation;
+    private Applicant applicationInformation;
     private String appliedProjectName;
     private String applicationStatus; // Pending, Successful, Unsuccessful, Booked
     private static List<Enquiry> enquiryList = new ArrayList<>();
@@ -10,7 +10,7 @@ public class ApplicationForm {
     private String appliedFlatType;
     private FlatBooking flatBooking;
 
-    public ApplicationForm(String applicationInformation, String appliedProjectName, String applicationStatus,
+    public ApplicationForm(Applicant applicationInformation, String appliedProjectName, String applicationStatus,
             HDBOfficer hdbOfficer, String appliedFlatType, FlatBooking flatBooking) {
         this.applicationInformation = applicationInformation;
         this.appliedProjectName = appliedProjectName;
@@ -20,15 +20,59 @@ public class ApplicationForm {
         this.flatBooking = flatBooking;
     }
 
+    public Applicant getApplicantInformation() {
+        return applicationInformation;
+    }
+
+    public void setApplicantInformation(Applicant applicantInfo) {
+        this.applicationInformation = applicantInfo;
+    }
+
+    public String getAppliedProjectName() {
+        return appliedProjectName;
+    }
+
+    public void setAppliedProjectName(String projectName) {
+        this.appliedProjectName = projectName;
+    }
+
     public String getApplicationStatus() {
         return applicationStatus;
     }
 
-    public void updateStatus(String applicationStatus) {
-        this.applicationStatus = applicationStatus;
+    public void setApplicationStatus(String updateStatus) {
+        this.applicationStatus = updateStatus;
     }
 
-    public sendEnquiry(Enquiry enquiry) {
+    public List<Enquiry> getEnquiryList() {
+        return enquiryList;
+    }
+
+    public void addEnquiryToList(Enquiry enquiry) {
         ApplicationForm.enquiryList.add(enquiry);
+    }
+
+    public HDBOfficer getHDBOfficer() {
+        return hdbOfficer;
+    }
+
+    public void setHDBOfficer(HDB officer) {
+        this.hdbOfficer = officer;
+    }
+
+    public String getAppliedFlatType() {
+        return appliedFlatType;
+    }
+
+    public void setAppliedFlatType(String flatType) {
+        this.appliedFlatType = flatType;
+    }
+
+    public FlatBooking getFlatBooking() {
+        return flatBooking;
+    }
+
+    public void setFlatBooking(FlatBooking booking) {
+        this.flatBooking = booking;
     }
 }
