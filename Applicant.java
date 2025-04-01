@@ -5,18 +5,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 
-public class Applicant extends UserAccount {
+public class Applicant extends UserAccount implements EnquiryTask, ApplicantTask {
+	private int applicantID;
     private boolean appliedForProject;
     private List<ApplicationForm> projectApplied;
+	private List<Enquiry> enquiryList;
     
-
-    public Applicant(String u, String n, int a, String m){  
+    public Applicant(String u, String n, int a, String m, int id){  
         super(u,n,a,m);
         this.appliedForProject = false;
+		applicantID = id;
+		this.projectApplied = new ArrayList<>(); // need read from excel 
+		this.enquiryList = new ArrayList<>() // need read from excel 
 		
     }
-    
-	 
+	
     public List<Project> viewAvailableProjects(){
         System.out.println("Displaying available projects...");
         List <Project> allProjects = Project.getAllProjects();
@@ -35,7 +38,7 @@ public class Applicant extends UserAccount {
                 if ((project.getType1() || project.getType2() ) && (project.getVisibility()).equals("on")){
                     filteredProjects.add(project);
                 }
-            }      // then how about people who fall out of this range 
+            }     
         }
 
         filteredProjects.sort(Comparator.comparing(Project::getName));
@@ -53,13 +56,12 @@ public class Applicant extends UserAccount {
 
 
     } 
-    public void applyForProject(Project project){
+	public void applyForProject(Project project){
         if (!appliedForProject){
         	List<Project> availableProject = this.viewAvailableProjects();
         	if (availableProject.contains(project)) {
-        		List <Enquiry> emptyEnquiryList = new ArrayList();
-        		// ApplicationForm (applicant, projectName, applicationStatus, enquiryList ??, HDBOfficer ?, flatType, flatBooking
-        		ApplicationForm form = new ApplicationForm(this,project.getName(),"Pending", emptyEnquiryList ,null,project.getType1()?"2-Room":"3-Room", null);
+        		// ApplicationForm (applicant, projectName, applicationStatus, HDBOfficer ?, flatType, flatBooking
+        		ApplicationForm form = new ApplicationForm(this,project.getName(),"Pending", null,project.getType1()?"2-Room":"3-Room", null);
         		this.projectApplied.add(form);
                 this.appliedForProject = true;
                 System.out.println("Application is successful");
@@ -73,6 +75,7 @@ public class Applicant extends UserAccount {
             System.out.println("Cannot apply for multiple projects.");
         }
     }
+    
     public void viewApplicationStatus(){ //should this be different from the appliedProjects
     	System.out.println("List of Applied Projects: ");
     	for (ApplicationForm form :projectApplied) {
@@ -102,60 +105,98 @@ public class Applicant extends UserAccount {
     	}
     	
     }
+
+
     public void sendEnquiry(){
     	Scanner sc = new Scanner (System.in);
     	// search for the application form (not sure)
-    	ApplicationForm form = getApplication(this);
-    	if (form != null) {
-    		List <Enquiry> enquiries = form.getEnquiry();
-    		int lastEnquiryID = 0;
-    		if (!enquiries.isEmpty()) {
-    			// retrieve the last id of the list of enquiries
-    			lastEnquiryID = enquiries.get(enquiries.size() - 1).getId();
-    		}
-    		
-    		System.out.println("Please enter your enquiry details: ");
-    		String content = sc.nextLine();
-    		// create new enquiry (ID, content, response)
-    		Enquiry enquiry = new Enquiry (lastEnquiryID+1 ,content, null);
-    		// add enquiry into the list of enquiries in application form
-    		enquiries.add(enquiry);
-    		System.out.println("New Enquiry submitted.");
-    	}
-    	else {
-    		System.out.println("No application found.");
-    	}
-    	
+		System.out.println ("Please enter your enquiry details: ");
+		String content = sc.nextLine();
+		int lastId = 0;
+		if (!enquiryList.isEmpty()){
+			int lastId = enquiryList.get(enquiryList.size()-1).getID();
+		}
+		Enquiry newEnquiry = new Enquiry(lastId, applicantID, content);
+		enquiryList.add(newEnquiry);
+		System.out.println("New Enquiry submitted.");
     	
     }
     public void editEnquiry(){
     	Scanner sc = new Scanner (System.in);
-    	ApplicationForm form = getApplication(this);
-    	if (form != null) {
-    		List <Enquiry> enquiryList = form.getEnquiry();
-    		System.out.println("List of enquiries: ");
-    		for (Enquiry enquiry: enquiryList) {
-    			System.out.println("Enquiry ID: "+enquiry.getID()+ "|| Content: "+enquiry.getContent()+" || Response: "+enquiry.getResponse());
-    		}
-    		// need error handling
-    		System.out.println("Please enter Enquiry ID: ");
-    		int id = sc.nextInt();
-    		for (Enquiry enquiry: enquiryList) {
-    			if (enquiry.getID() == id ) {
-    	    		System.out.println("Please enter the new enquiry: ");
-    	    		String newContent = sc.nextLine();
-    				enquiry.updateContent(newContent);
-    				// not sure if response need to update since the content is different
-    				enquiry.updateResponse(null);
-    				System.out.println("Enquiry content updated successfully.");
-    				break;
-    				
-    			}
-    		}
-    		
-    	}
-    	else {
-    		System.out.println("No application found.");
-    	}
+
+		if (enquiryList.isEmpty()){
+			System.out.println("You have no enquiries to edit.");
+			return;
+		}
+
+		for (Enquiry each: enquiryList){
+			System.out.println("Enquiry ID: "+each.getID()+ "|| Content: "+each.getContent()+" || Response: "+ each.getResponse());
+		}
+		System.out.print("Please enter the Enquiry ID to edit: ");
+		int id = sc.nextInt();
+		boolean found = false;
+		for (Enquiry enquiry: enquiryList) {
+			if (enquiry.getID() == id){
+				found = true;
+				if (enquiry.getResponse() == null){
+					System.out.println("Please enter the new enquiry: ");
+					String newContent = sc.nextLine();
+					enquiry.updateContent(newContent);
+					System.out.println("Enquiry content updated successfully.");
+				}
+				else{
+					System.out.println("Enquiry has been answered. No further changes available.");
+				}
+				break;
+			} 
+		if (!found){
+			System.out.println("Enquiry ID not found. Please check again.");
+		}
+
     }
 }
+	public void deleteEnquiry(){
+		if (enquiryList.isEmpty()){
+			System.out.println("You have no enquiries to edit.");
+			return;
+		}
+		// Display all enquiries
+		for (Enquiry each: enquiryList){
+			System.out.println("Enquiry ID: "+each.getID()+ "|| Content: "+each.getContent()+" || Response: "+ each.getResponse());
+		}
+
+		System.out.print("Please enter the Enquiry ID to delete: ");
+		int id = sc.nextInt();
+		sc.nextLine();
+
+		boolean found = false;
+		for (Enquiry enquiry: enquiryList) {
+			if (enquiry.getID() == id){
+				found = true;
+				if (enquiry.getResponse() == null){
+					System.out.println("Chosen Enquiry: Enquiry ID:"+enquiry.getID()+"|| Content: "+enquiry.getContent()+" || Response: "+enquiry.getResponse());
+					String choice;
+					do{
+						System.out.print("Are you sure want to delete this enquiry (yes/no):");
+						choice = sc.next().toLowerCase();
+					}while (!choice.equals("yes") && !choice.equals("no"));
+
+					if (choice.equals("yes")){
+						enquiryList.remove(enquiry);
+						System.out.println("Enquiry have been removed.");
+					}
+					else {
+						System.out.println("No changes have been done");
+					}
+				}
+				else{
+					System.out.println("Enquiry has been answered. No further changes available.");
+				}
+				break;
+			} 
+		if (!found){
+			System.out.println("Enquiry ID not found. Please check again.");
+		}
+	}
+}
+

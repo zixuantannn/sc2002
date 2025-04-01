@@ -5,7 +5,6 @@ public class ApplicationForm {
     private Applicant applicationInformation;
     private String appliedProjectName;
     private String applicationStatus; // Pending, Successful, Unsuccessful, Booked
-    private static List<Enquiry> enquiryList = new ArrayList<>();
     private HDBOfficer hdbOfficer;
     private String appliedFlatType;
     private FlatBooking flatBooking;
@@ -42,14 +41,6 @@ public class ApplicationForm {
 
     public void setApplicationStatus(String updateStatus) {
         this.applicationStatus = updateStatus;
-    }
-
-    public List<Enquiry> getEnquiryList() {
-        return enquiryList;
-    }
-
-    public void addEnquiryToList(Enquiry enquiry) {
-        ApplicationForm.enquiryList.add(enquiry);
     }
 
     public HDBOfficer getHDBOfficer() {
