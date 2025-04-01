@@ -56,7 +56,7 @@ public class ApplicationForm {
         return hdbOfficer;
     }
 
-    public void setHDBOfficer(HDB officer) {
+    public void setHDBOfficer(HDBOfficer officer) {
         this.hdbOfficer = officer;
     }
 
