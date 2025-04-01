@@ -200,3 +200,4 @@ public class Applicant extends UserAccount implements EnquiryTask, ApplicantTask
 	}
 }
 
+}

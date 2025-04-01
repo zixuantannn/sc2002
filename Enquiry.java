@@ -1,14 +1,16 @@
 
 
 public class Enquiry {
-	public int enquiryID;
-	public String content;
-	public String response;
+	private int enquiryID;
+	private int applicantID;
+	private String content;
+	private String response;
 	
-	public Enquiry(int id, String c, String r) {
+	public Enquiry(int id, int aID, String c) {
 		enquiryID = id;
+		applicantID = aID;
 		content = c;
-		response = r;
+		response = null;
 	}
 	public int getID() {
 		return enquiryID;
@@ -18,6 +20,9 @@ public class Enquiry {
 	}
 	public String getResponse() {
 		return response;
+	}
+	public int getApplicantID(){
+		return applicantID;
 	}
 	
 	public void updateContent(String newContent) {
